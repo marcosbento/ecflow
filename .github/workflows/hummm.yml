@@ -13,16 +13,21 @@ jobs:
     name: hummmm
     runs-on: ubuntu-latest
     container:
-      image: marcosbento/receptacles:ubuntu2204.dev
+      image: marcosbento/ecflow:ubuntu_2404
       credentials:
         username: marcosbento
         password: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
+    strategy:
+      matrix:
+        profile:
+          - gcc8
+          - gcc13
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Run a one-line script
-        run: echo Hello, world!
+        run: echo Hello, world! My profile is ${{ matrix.profile }}
 
       - name: Run a multi-line script
         run: |
