@@ -44,3 +44,8 @@ jobs:
         run: |
           cd ecflow
           cmake -B build.${{ matrix.profile }} -S . -DCMAKE_BUILD_TYPE=${{ matrix.buildtype }}
+
+      - name: Build
+        run: |
+          cd ecflow
+          cmake --build build.${{ matrix.profile }} -j 4
