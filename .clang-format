@@ -1,5 +1,5 @@
 
-Standard: c++17
+Standard: c++20
 
 # Indent with a certain number of spaces at a time (no tabs).
 IndentWidth: 4
