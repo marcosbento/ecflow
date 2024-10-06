@@ -1,4 +1,4 @@
-name: hummm
+name: Sandbox
 
 on:
   # Trigger the workflow on push to master or develop, except tag creation
@@ -9,29 +9,29 @@ on:
       - '**'
 
 jobs:
-  hummm:
-    name: hummmm
+  sandbox:
+
+    strategy:
+      matrix:
+        container:
+          - ubuntu_2404_amd64
+        preset:
+          - linux.ubuntu.all.gcc13
+          - linux.ubuntu.all.gcc14
+        buildtype:
+          - release
+
+    name: ecFlow ${{ matrix.preset }}.${{ matrix.buildtype }} @ ${{ matrix.container }}
     if: github.repository_owner == 'marcosbento'
     runs-on: ubuntu-latest
 
     container:
-
-      image: marcosbento/ecflow:ubuntu_2404_amd64
+      image: marcosbento/ecflow:${{ matrix.container }}
       credentials:
         username: marcosbento
         password: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
 
-    strategy:
-
-      matrix:
-        buildtype:
-          - Debug
-        preset:
-          - linux.ubuntu.all.gcc13.release
-          - linux.ubuntu.all.gcc14.release
-
     steps:
-
       - name: Checkout ecbuild
         uses: actions/checkout@v4
         with:
@@ -46,14 +46,14 @@ jobs:
       - name: Configure
         run: |
           cd ecflow
-          cmake --preset ${{ matrix.preset }}
+          cmake --preset ${{ matrix.preset }}.${{ matrix.buildtype }}
 
       - name: Build
         run: |
           cd ecflow
-          cmake --build --preset ${{ matrix.preset }}
+          cmake --build --preset ${{ matrix.preset }}.${{ matrix.buildtype }}
 
       - name: Test
         run: |
           cd ecflow
-          ctest --preset ${{ matrix.preset }} -L nighly
+          ctest --preset ${{ matrix.preset }}.${{ matrix.buildtype }} -L nighly
