@@ -1,0 +1,119 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 29,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "linux.ubuntu",
+      "description": "Build on 'Linux/Ubuntu'",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/.deploy/build/${presetName}",
+      "installDir": "${sourceDir}/.deploy/install/${presetName}",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "cacheVariables": {
+        "CMAKE_VERBOSE_MAKEFILE": "OFF",
+        "CMAKE_COLOR_DIAGNOSTICS": "ON",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+    {
+      "name": "linux.ubuntu.all",
+      "description": "Build on 'Linux/Ubuntu', all components",
+      "hidden": true,
+      "inherits": "linux.ubuntu",
+      "cacheVariables": {
+        "ENABLE_TESTS": "ON",
+        "ENABLE_ALL_TESTS": "ON",
+        "ENABLE_DOCS": "OFF",
+        "ENABLE_PYTHON": "ON",
+        "ENABLE_SERVER": "ON",
+        "ENABLE_SSL": "ON",
+        "ENABLE_UDP": "ON",
+        "ENABLE_HTTP": "ON",
+        "ENABLE_UI": "ON",
+        "ENABLE_STATIC_BOOST_LIBS": "OFF",
+        "Boost_ROOT": "/usr",
+        "Boost_INCLUDE_DIR": "/usr/include"
+      }
+    },
+    {
+      "name": "linux.ubuntu.all.gcc13",
+      "description": "Build on 'Linux/Ubuntu', all components, using 'GNU GCC 13'",
+      "hidden": true,
+      "inherits": "linux.ubuntu.all",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc-13",
+        "CMAKE_CXX_COMPILER": "g++-13"
+      }
+    },
+    {
+      "name": "linux.ubuntu.all.gcc13.release",
+      "description": "Build on 'Linux/Ubuntu', all components, using 'GNU GCC 13', for 'Release'",
+      "inherits": "linux.ubuntu.all.gcc13",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "linux.ubuntu.all.gcc14",
+      "description": "Build on 'Linux/Ubuntu', all components, using 'GNU GCC 14'",
+      "hidden": true,
+      "inherits": "linux.ubuntu.all",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc-14",
+        "CMAKE_CXX_COMPILER": "g++-14"
+      }
+    },
+    {
+      "name": "linux.ubuntu.all.gcc14.release",
+      "description": "Build on 'Linux/Ubuntu', all components, using 'GNU GCC 14', for 'Release'",
+      "inherits": "linux.ubuntu.all.gcc14",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "linux.ubuntu.all.gcc13.release",
+      "configurePreset": "linux.ubuntu.all.gcc13.release"
+    },
+    {
+      "name": "linux.ubuntu.all.gcc14.release",
+      "configurePreset": "linux.ubuntu.all.gcc14.release"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "linux.ubuntu.all.gcc13.release",
+      "configurePreset": "linux.ubuntu.all.gcc13.release",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": true
+      }
+    },
+    {
+      "name": "linux.ubuntu.all.gcc14.release",
+      "configurePreset": "linux.ubuntu.all.gcc14.release",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": true
+      }
+    }
+
+  ]
+}
