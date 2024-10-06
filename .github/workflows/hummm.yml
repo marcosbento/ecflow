@@ -13,23 +13,34 @@ jobs:
     name: hummmm
     runs-on: ubuntu-latest
     container:
-      image: marcosbento/ecflow:ubuntu_2404
+      image: marcosbento/ecflow:ubuntu_2404_amd64
       credentials:
         username: marcosbento
         password: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
     strategy:
       matrix:
+        buildtype:
+          - Debug
         profile:
           - gcc8
           - gcc13
     steps:
-      - name: Checkout
+      - name: Checkout ecbuild
         uses: actions/checkout@v4
+        with:
+          repository: ecmwf/ecbuild
+          path: ecbuild
+      - name: Checkout ecflow
+        uses: actions/checkout@v4
+        with:
+          path: ecflow
 
-      - name: Run a one-line script
-        run: echo Hello, world! My profile is ${{ matrix.profile }}
-
-      - name: Run a multi-line script
+      - name: Run a script
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          echo Hello, world! My profile is ${{ matrix.profile }}
+          echo Repo owner is ${{ github.repository_owner }}
+
+      - name: Configure
+        run: |
+          cd ecflow
+          cmake -B build.${{ matrix.profile }} -S . -DCMAKE_BUILD_TYPE=${{ matrix.buildtype }}
