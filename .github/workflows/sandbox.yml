@@ -16,12 +16,12 @@ jobs:
         container:
           - ubuntu_2404_amd64
         preset:
-          - linux.ubuntu.all.gcc13
-          - linux.ubuntu.all.gcc14
+          - ubuntu.all.gcc13
+          - ubuntu.all.gcc14
         buildtype:
           - release
 
-    name: ecFlow ${{ matrix.preset }}.${{ matrix.buildtype }} @ ${{ matrix.container }}
+    name: ${{ matrix.preset }}.${{ matrix.buildtype }} @ ${{ matrix.container }}
     if: github.repository_owner == 'marcosbento'
     runs-on: ubuntu-latest
 
@@ -56,4 +56,4 @@ jobs:
       - name: Test
         run: |
           cd ecflow
-          ctest --preset ${{ matrix.preset }}.${{ matrix.buildtype }} -L nighly
+          ctest --preset ${{ matrix.preset }}.${{ matrix.buildtype }} -L nightly

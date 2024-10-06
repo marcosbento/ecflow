@@ -25,7 +25,7 @@
       }
     },
     {
-      "name": "linux.ubuntu.all",
+      "name": "ubuntu.all",
       "description": "Build on 'Linux/Ubuntu', all components",
       "hidden": true,
       "inherits": "linux.ubuntu",
@@ -45,37 +45,37 @@
       }
     },
     {
-      "name": "linux.ubuntu.all.gcc13",
+      "name": "ubuntu.all.gcc13",
       "description": "Build on 'Linux/Ubuntu', all components, using 'GNU GCC 13'",
       "hidden": true,
-      "inherits": "linux.ubuntu.all",
+      "inherits": "ubuntu.all",
       "cacheVariables": {
         "CMAKE_C_COMPILER": "gcc-13",
         "CMAKE_CXX_COMPILER": "g++-13"
       }
     },
     {
-      "name": "linux.ubuntu.all.gcc13.release",
+      "name": "ubuntu.all.gcc13.release",
       "description": "Build on 'Linux/Ubuntu', all components, using 'GNU GCC 13', for 'Release'",
-      "inherits": "linux.ubuntu.all.gcc13",
+      "inherits": "ubuntu.all.gcc13",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
       }
     },
     {
-      "name": "linux.ubuntu.all.gcc14",
+      "name": "ubuntu.all.gcc14",
       "description": "Build on 'Linux/Ubuntu', all components, using 'GNU GCC 14'",
       "hidden": true,
-      "inherits": "linux.ubuntu.all",
+      "inherits": "ubuntu.all",
       "cacheVariables": {
         "CMAKE_C_COMPILER": "gcc-14",
         "CMAKE_CXX_COMPILER": "g++-14"
       }
     },
     {
-      "name": "linux.ubuntu.all.gcc14.release",
+      "name": "ubuntu.all.gcc14.release",
       "description": "Build on 'Linux/Ubuntu', all components, using 'GNU GCC 14', for 'Release'",
-      "inherits": "linux.ubuntu.all.gcc14",
+      "inherits": "ubuntu.all.gcc14",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
       }
@@ -83,18 +83,18 @@
   ],
   "buildPresets": [
     {
-      "name": "linux.ubuntu.all.gcc13.release",
-      "configurePreset": "linux.ubuntu.all.gcc13.release"
+      "name": "ubuntu.all.gcc13.release",
+      "configurePreset": "ubuntu.all.gcc13.release"
     },
     {
-      "name": "linux.ubuntu.all.gcc14.release",
-      "configurePreset": "linux.ubuntu.all.gcc14.release"
+      "name": "ubuntu.all.gcc14.release",
+      "configurePreset": "ubuntu.all.gcc14.release"
     }
   ],
   "testPresets": [
     {
-      "name": "linux.ubuntu.all.gcc13.release",
-      "configurePreset": "linux.ubuntu.all.gcc13.release",
+      "name": "ubuntu.all.gcc13.release",
+      "configurePreset": "ubuntu.all.gcc13.release",
       "output": {
         "outputOnFailure": true
       },
@@ -104,8 +104,8 @@
       }
     },
     {
-      "name": "linux.ubuntu.all.gcc14.release",
-      "configurePreset": "linux.ubuntu.all.gcc14.release",
+      "name": "ubuntu.all.gcc14.release",
+      "configurePreset": "ubuntu.all.gcc14.release",
       "output": {
         "outputOnFailure": true
       },
