@@ -1,0 +1,25 @@
+name: hummm
+
+on:
+  # Trigger the workflow on push to master or develop, except tag creation
+  push:
+    branches:
+      - 'feature/**'
+    tags-ignore:
+      - '**'
+
+jobs:
+  hummm:
+    name: hummmm
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Run a one-line script
+        run: echo Hello, world!
+
+      - name: Run a multi-line script
+        run: |
+          echo Add other actions to build,
+          echo test, and deploy your project.
