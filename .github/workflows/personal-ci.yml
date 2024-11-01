@@ -1,0 +1,72 @@
+name: personal-ci
+
+on:
+  # Trigger the workflow on push to master or develop, except tag creation
+  push:
+    branches:
+      - 'truth'
+      - 'feature/**'
+    tags-ignore:
+      - '**'
+
+jobs:
+  github-ctx-dump:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
+
+  personal-ci:
+
+    strategy:
+      matrix:
+        container:
+          - ubuntu_24_04__amd64
+        preset:
+          - ubuntu.all.gcc13
+          - ubuntu.all.gcc14
+        buildtype:
+          - release
+
+    name: ${{ matrix.preset }}.${{ matrix.buildtype }} @ ${{ matrix.container }}
+    if: github.repository_owner == 'marcosbento'
+    runs-on: ubuntu-latest
+
+    container:
+      image: marcosbento/executors:${{ matrix.container }}
+      credentials:
+        username: marcosbento
+        password: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
+
+    steps:
+      - name: Checkout ecbuild
+        uses: actions/checkout@v4
+        with:
+          repository: ecmwf/ecbuild
+          path: ecbuild
+
+      - name: Checkout ecflow
+        uses: actions/checkout@v4
+        with:
+          path: ecflow
+
+      - name: Configure
+        run: |
+          cd ecflow
+          echo "Configure ${{ matrix.preset }}.${{ matrix.buildtype }}"
+          cmake --preset ${{ matrix.preset }}.${{ matrix.buildtype }}
+
+      - name: Build
+        run: |
+          cd ecflow
+          echo "Build ${{ matrix.preset }}.${{ matrix.buildtype }}"
+          cmake --build --preset ${{ matrix.preset }}.${{ matrix.buildtype }}
+
+      - name: Test
+        run: |
+          cd ecflow
+          echo "Test ${{ matrix.preset }}.${{ matrix.buildtype }}"
+          ctest --preset ${{ matrix.preset }}.${{ matrix.buildtype }} -L nightly
