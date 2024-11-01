@@ -1,4 +1,4 @@
-name: Sandbox
+name: personal-ci
 
 on:
   # Trigger the workflow on push to master or develop, except tag creation
@@ -9,7 +9,7 @@ on:
       - '**'
 
 jobs:
-  sandbox-dump:
+  github-ctx-dump:
     runs-on: ubuntu-latest
     steps:
       - name: Dump GitHub context
@@ -18,7 +18,7 @@ jobs:
         run: echo "$GITHUB_CONTEXT"
 
 
-  sandbox:
+  personal-ci:
 
     strategy:
       matrix:
@@ -55,14 +55,17 @@ jobs:
       - name: Configure
         run: |
           cd ecflow
+          echo "Configure ${{ matrix.preset }}.${{ matrix.buildtype }}"
           cmake --preset ${{ matrix.preset }}.${{ matrix.buildtype }}
 
       - name: Build
         run: |
           cd ecflow
+          echo "Build ${{ matrix.preset }}.${{ matrix.buildtype }}"
           cmake --build --preset ${{ matrix.preset }}.${{ matrix.buildtype }}
 
       - name: Test
         run: |
           cd ecflow
+          echo "Test ${{ matrix.preset }}.${{ matrix.buildtype }}"
           ctest --preset ${{ matrix.preset }}.${{ matrix.buildtype }} -L nightly
