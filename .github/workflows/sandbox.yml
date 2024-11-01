@@ -23,7 +23,7 @@ jobs:
     strategy:
       matrix:
         container:
-          - ubuntu_2404_amd64
+          - ubuntu_24_04__amd64
         preset:
           - ubuntu.all.gcc13
           - ubuntu.all.gcc14
@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: marcosbento/ecflow:${{ matrix.container }}
+      image: marcosbento/executors:${{ matrix.container }}
       credentials:
         username: marcosbento
         password: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
