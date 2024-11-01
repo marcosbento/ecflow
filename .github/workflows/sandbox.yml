@@ -9,7 +9,7 @@ on:
       - '**'
 
 jobs:
-  one:
+  sandbox-dump:
     runs-on: ubuntu-latest
     steps:
       - name: Dump GitHub context
