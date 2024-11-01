@@ -6,6 +6,14 @@ on:
     types: [opened, synchronize]
  
 jobs:
+  one:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
   label:
     if: ${{ !github.event.repository.fork }}
     uses: ecmwf-actions/reusable-workflows/.github/workflows/label-pr.yml@v2
