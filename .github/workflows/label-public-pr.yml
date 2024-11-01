@@ -7,4 +7,5 @@ on:
  
 jobs:
   label:
+    if: ${{ !github.event.repository.fork }}
     uses: ecmwf-actions/reusable-workflows/.github/workflows/label-pr.yml@v2
