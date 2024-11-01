@@ -13,14 +13,6 @@ on:
   delete: ~
 
 jobs:
-  sync-dump:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
-        run: echo "$GITHUB_CONTEXT"
-
   # Calls a reusable CI workflow to sync the current with a remote repository.
   #   It will correctly handle addition of any new and removal of existing Git objects.
   sync:
