@@ -42,7 +42,7 @@ void SslTcpServer::start_accept() {
 
 void SslTcpServer::handle_accept(const boost::system::error_code& e, ssl_connection_ptr conn) {
     if (serverEnv_.debug())
-        cout << "   SslTcpServer::handle_accept" << endl;
+        cout << "   SslTcpServer::handle_accept()" << endl;
 
     // Check whether the server was stopped by a signal before this completion
     // handler had a chance to run.
@@ -80,7 +80,7 @@ void SslTcpServer::handle_accept(const boost::system::error_code& e, ssl_connect
 
 void SslTcpServer::handle_handshake(const boost::system::error_code& e, ssl_connection_ptr new_conn) {
     if (serverEnv_.debug())
-        cout << "   SslTcpServer::handle_handshake" << endl;
+        cout << "   SslTcpServer::handle_handshake()" << endl;
 
     if (!e) {
         // Successfully accepted a new connection. Determine what the
@@ -98,7 +98,10 @@ void SslTcpServer::handle_handshake(const boost::system::error_code& e, ssl_conn
 }
 
 void SslTcpServer::handle_read(const boost::system::error_code& e, ssl_connection_ptr conn) {
-    /// Handle completion of a write operation.
+    /// Handle completion of a read operation.
+    if (serverEnv_.debug())
+        cout << "   SslTcpServer::handle_read()" << endl;
+
     // **********************************************************************************
     // This function *must* finish with write, otherwise it ends up being called recursively
     // ***********************************************************************************

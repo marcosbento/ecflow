@@ -96,6 +96,15 @@ public:
         buffers.reserve(2);
         buffers.emplace_back(boost::asio::buffer(outbound_header_));
         buffers.emplace_back(boost::asio::buffer(outbound_data_));
+
+        std::cout << "***OUTBOUND DATA***" << std::endl;
+        std::cout << "HEADER" << std::endl;
+        std::cout << outbound_header_ << std::endl;
+        std::cout << "PAYLOAD" << std::endl;
+        std::cout << outbound_data_ << std::endl;
+        std::cout << "*******************" << std::endl;
+
+
         boost::asio::async_write(
             socket_, buffers, [handler](const boost::system::error_code& error, std::size_t bytes_transferred) {
                 handler(error);
@@ -159,6 +168,13 @@ private:
                 [this, &t, handler](const boost::system::error_code& error, std::size_t bytes_transferred) {
                     this->handle_read_data(error, t, handler);
                 });
+
+            std::cout << "***INBOUND DATA***" << std::endl;
+            std::cout << "HEADER" << std::endl;
+            std::cout << std::string{inbound_header_} << std::endl;
+            std::cout << "PAYLOAD" << std::endl;
+            std::cout << std::string{inbound_data_.data()} << std::endl;
+            std::cout << "*******************" << std::endl;
         }
     }
 
