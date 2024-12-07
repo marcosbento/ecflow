@@ -24,7 +24,7 @@ jobs:
     strategy:
       matrix:
         container:
-          - ubuntu_24_04__amd64
+          - ubuntu-24.04
         preset:
           - ubuntu.all.gcc13
           - ubuntu.all.gcc14
