@@ -20,6 +20,7 @@
 ///     a mechanism to stop this, when reset is called, via server this is disabled
 ///
 
+#include <cassert>
 #include <cstdint>
 #include <iomanip>
 #include <iostream>
@@ -28,6 +29,7 @@
 #include <vector>
 
 #include "ecflow/attribute/Variable.hpp"
+#include "ecflow/core/Cal.hpp"
 #include "ecflow/core/Chrono.hpp"
 
 /////////////////////////////////////////////////////////////////////////
@@ -146,6 +148,7 @@ public:
     long last_valid_value_plus(int value) const override;
 
     void delta(int d) { delta_ = d; }
+    int delta() const { return delta_; }
     bool operator==(const RepeatDate& rhs) const;
     bool operator<(const RepeatDate& rhs) const { return name() < rhs.name(); }
 
@@ -319,6 +322,10 @@ public:
     int end() const override;
     int step() const override { return 1; }
     long value() const override; // return value at index   otherwise return 0
+    long value_at(size_t i) const {
+        assert(i < list_.size());
+        return list_[i];
+    };
     long index_or_value() const override { return currentIndex_; }
     long last_valid_value() const override;
     long last_valid_value_minus(int value) const override;
@@ -331,6 +338,8 @@ public:
     std::string value_as_string(int index) const override;
     std::string next_value_as_string() const override;
     std::string prev_value_as_string() const override;
+
+    const std::vector<int>& values() const { return list_; }
 
     void setToLastValue() override;
     void reset() override;
@@ -383,6 +392,7 @@ public:
     long value() const override { return value_; }
     long index_or_value() const override { return value_; }
     long last_valid_value() const override;
+    int delta() const { return delta_; }
 
     RepeatInteger* clone() const override { return new RepeatInteger(name_, start_, end_, delta_, value_); }
     bool compare(RepeatBase*) const override;
@@ -443,6 +453,8 @@ public:
     long index_or_value() const override { return currentIndex_; }
     long last_valid_value() const override;
 
+    const std::vector<std::string>& values() const { return theEnums_; }
+
     RepeatBase* clone() const override { return new RepeatEnumerated(name_, theEnums_, currentIndex_); }
     bool compare(RepeatBase*) const override;
     bool valid() const override { return (currentIndex_ >= 0 && currentIndex_ < static_cast<int>(theEnums_.size())); }
@@ -502,6 +514,8 @@ public:
     std::string value_as_string(int index) const override;
     std::string next_value_as_string() const override;
     std::string prev_value_as_string() const override;
+
+    const std::vector<std::string>& values() const { return theStrings_; }
 
     void setToLastValue() override;
     void reset() override;
@@ -564,8 +578,7 @@ public:
     int start() const override { return 0; }
     int end() const override { return 0; }
     int step() const override { return step_; }
-    void increment() override { /* do nothing */
-    }
+    void increment() override { /* do nothing */ }
     long value() const override { return step_; }
     long index_or_value() const override { return step_; }
     long last_valid_value() const override { return step_; }
@@ -578,15 +591,11 @@ public:
     std::string next_value_as_string() const override { return std::string(); }
     std::string prev_value_as_string() const override { return std::string(); }
 
-    void setToLastValue() override { /* do nothing  ?? */
-    }
+    void setToLastValue() override { /* do nothing  ?? */ }
     void reset() override { valid_ = true; }
-    void change(const std::string& /*newValue*/) override { /* do nothing */
-    }
-    void changeValue(long /*newValue*/) override { /* do nothing */
-    }
-    void set_value(long /*newValue*/) override { /* do nothing */
-    }
+    void change(const std::string& /*newValue*/) override { /* do nothing */ }
+    void changeValue(long /*newValue*/) override { /* do nothing */ }
+    void set_value(long /*newValue*/) override { /* do nothing */ }
     void write(std::string&) const override;
     std::string dump() const override;
     bool isDay() const override { return true; }
@@ -705,6 +714,11 @@ public:
 
     /// Expose base for the GUI only, use with caution
     RepeatBase* repeatBase() const { return type_.get(); }
+
+    template <typename T>
+    const T& as() const {
+        return dynamic_cast<const T&>(*repeatBase());
+    }
 
 private:
     void write(std::string& ret) const {

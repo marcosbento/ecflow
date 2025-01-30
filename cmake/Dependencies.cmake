@@ -131,11 +131,11 @@ endif()
 if ( ENABLE_STATIC_BOOST_LIBS )
   set(Boost_USE_STATIC_LIBS ON)
   set(BOOST_TEST_DYN_LINK "")
-  ecbuild_info( "Using STATIC boost libraries : ${BOOST_TEST_DYN_LINK}" )
+  ecbuild_info( "Using STATIC boost libraries" )
 else()
   set(Boost_USE_STATIC_LIBS OFF)
   set(BOOST_TEST_DYN_LINK "BOOST_TEST_DYN_LINK")
-  ecbuild_info( "Using SHARED boost libraries : ${BOOST_TEST_DYN_LINK}" )
+  ecbuild_info( "Using SHARED boost libraries : (i.e. defining ${BOOST_TEST_DYN_LINK})" )
 endif()
 
 set(Boost_USE_MULTITHREADED    ON)
@@ -362,3 +362,15 @@ else()
   ecbuild_info("Clang-Format not found")
   ecbuild_info("    WARNING: No formatting targets will be defined!")
 endif ()
+
+# =========================================================================================
+# Crypt
+# =========================================================================================
+ecbuild_info( "Locating Crypt" )
+
+find_package(Crypt)
+
+ecbuild_info( "Crypt details:" )
+ecbuild_info( " * Crypt_FOUND        : ${Crypt_FOUND}" )
+ecbuild_info( " * Crypt_INCLUDE_DIRS : ${Crypt_INCLUDE_DIRS}" )
+ecbuild_info( " * Crypt_LIBRARIES    : ${Crypt_LIBRARIES}" )

@@ -8,10 +8,9 @@
 # nor does it submit to any jurisdiction.
 #
 
+add_subdirectory(test/harness)
+
 set(test_srcs
-  # Headers
-  test/MockServer.hpp
-  test/TestHelper.hpp
   # Sources
   test/TestAlterCmd.cpp
   test/TestArchiveAndRestoreCmd.cpp
@@ -48,9 +47,10 @@ ecbuild_add_test(
     ../node/test
   LIBS
     ecflow_all
+    test_scaffold
+    test_harness.base
     Threads::Threads
     $<$<BOOL:${OPENSSL_FOUND}>:OpenSSL::SSL>
-    test_support
   TEST_DEPENDS
     u_parser
 )
@@ -75,6 +75,8 @@ if (ENABLE_ALL_TESTS)
       ${test_srcs}
     LIBS
       ecflow_all
+      test_scaffold
+      test_harness.base
       Threads::Threads
   )
   target_clangformat(p_job_gen
