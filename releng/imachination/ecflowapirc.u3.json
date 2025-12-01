@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "tokens" : [
+    {
+      "server": ".*",
+      "type"  : "basic",
+      "api"   : {
+        "username": "u3",
+        "password": "somesecret#3"
+      }
+    }
+  ]
+}

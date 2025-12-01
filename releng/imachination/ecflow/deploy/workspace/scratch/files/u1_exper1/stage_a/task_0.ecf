@@ -1,0 +1,83 @@
+#!/bin/bash
+
+echo "Running on: $(hostname)" || true
+set -x # echo script lines as they are executed
+set -e # stop the shell on first error
+set -u # fail when using an undefined variable
+
+
+export ECF_PORT=%ECF_PORT%    # The server port number
+export ECF_HOST=%ECF_HOST%    # The host name where the server is running
+export ECF_NAME=%ECF_NAME%    # The name of this current task
+export ECF_PASS=%ECF_PASS%    # A unique password
+export ECF_TRYNO=%ECF_TRYNO%  # Current try number of the task
+
+[[ -d "scratch/files" ]] || mkdir -p "scratch/files"
+cd "scratch/files"
+echo "Current working directory: $(pwd)"
+
+%nopp
+
+
+# The following is used to allow adding '--http' or '--https' to the ecflow client calls
+export EXTRA_FLAGS='--https --port 443 --host 217.71.194.143 -d'
+
+ECFLOW_INSTALL_PATH=/usr/local/bin
+ECFLOWLIGHT_INSTALL_PATH=/not/used
+
+export LOCAL_ECFLOW_CLIENT=${ECFLOW_INSTALL_PATH}/ecflow_client
+export LOCAL_ECFLOWLIGHT_CLIENT=${ECFLOWLIGHT_INSTALL_PATH}/unavailable_ecflow_light_client
+
+export ECF_AUTHTOKENS=/workspace/ecflowapirc.mb.json
+
+${LOCAL_ECFLOW_CLIENT} --version
+
+# *** Add ecflow to PATH
+export PATH=$ECFLOW_INSTALL_PATH/bin:$PATH
+# *** Add ecflow-light to PATH
+export PATH=$ECFLOWLIGHT_INSTALL_PATH/bin:$PATH
+
+# Tell ecFlow we have started
+${LOCAL_ECFLOW_CLIENT} ${EXTRA_FLAGS} --init=$$
+
+# Define a error handler
+ERROR() {
+   set +e                                        # Clear -e flag, so we do not fail
+   wait                                          # wait for background process to stop
+   ${LOCAL_ECFLOW_CLIENT}  ${EXTRA_FLAGS} --abort=trap  # Notify ecFlow that something went wrong, using 'trap' as the reason
+   trap 0                                        # Remove the trap
+   exit 0                                        # End the script
+}
+
+# Trap any calls to exit and errors caught by the -e flag
+trap ERROR 0
+
+
+# Trap any signal that may cause the script to fail
+trap '{ echo "Killed by a signal"; ERROR ; }' 1 2 3 4 5 6 7 8 10 12 13 15
+
+echo "I am part of a suite that lives in %ECF_HOME%"
+
+n=0
+while [[ $n -le 20 ]]        # Loop 'iterations' times = 'iterations' * 'step' seconds
+do
+   sleep 2                        # Wait a short time
+   ${LOCAL_ECFLOW_CLIENT} ${EXTRA_FLAGS} --label=l "Going on <$n> ..."
+   ${LOCAL_ECFLOW_CLIENT} ${EXTRA_FLAGS} --meter=m "$n"
+
+   if [ $(( n % 2 )) -eq 0 ]; then
+      event_value=clear
+   else
+      event_value=set
+   fi
+   ${LOCAL_ECFLOW_CLIENT} ${EXTRA_FLAGS} --event=e $event_value
+
+   (( n = $n + 1 ))
+done
+
+wait                                              # wait for background process to stop
+${LOCAL_ECFLOW_CLIENT} ${EXTRA_FLAGS} --complete  # Notify ecFlow of a normal end
+trap 0                                            # Remove all traps
+exit 0                                            # End the shell
+
+%end

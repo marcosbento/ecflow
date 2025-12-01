@@ -1,0 +1,220 @@
+---
+- name: Install Server
+  hosts: all
+  become: true
+  vars:
+    # general cfg
+    username: eouser
+    homedir: "/home/{{ username }}"
+    docker_compose_version: "2.40.3"
+
+    # ecflow
+    ecbuild_repo_url: https://github.com/ecmwf/ecbuild
+    ecbuild_repo_dest: "{{ homedir }}/ecbuild"
+    ecbuild_git_branch: develop
+    ecflow_repo_url: https://github.com/ecmwf/ecflow
+    ecflow_repo_dest: "{{ homedir }}/ecflow"
+    ecflow_git_branch: feature/node_level_permissions
+
+  tasks:
+
+## Facts
+
+    - name: Print facts (for debugging)
+      tags:
+        - facts
+      ansible.builtin.debug:
+#        msg:
+#          - "hostname = {{ ansible_facts['nodename'] }}"
+#          - "os = {{ ansible_facts['os_family'] }}"
+#          - "distribution = {{ ansible_facts['distribution'] }}"
+        var: ansible_facts
+        # "everything = {{ ansible_facts }}"
+
+## Core
+
+    - name: Install basic dependencies
+      tags:
+        - core
+      apt:
+        name: "{{ item }}"
+        state: latest
+        update_cache: yes
+      loop:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - software-properties-common
+
+## Git
+
+    - name: Install git
+      tags:
+        - packages-git
+      apt:
+        name: "{{ item }}"
+        state: latest
+        update_cache: yes
+      loop:
+        - git
+
+## Docker (inspired by https://alexhernandez.info/articles/infrastructure/how-to-install-docker-using-ansible/)
+
+    - name: Remove unwanted (old!?) packages
+      tags:
+        - packages-docker
+      apt:
+        name: "{{ item }}"
+        state: absent
+        update_cache: yes
+      loop:
+        - docker
+        - docker.io
+        - docker-compose
+        - docker-doc
+        - podman-docker
+
+    - name: add GPG key
+      tags:
+        - packages-docker
+      apt_key:
+        url: https://download.docker.com/linux/debian/gpg
+        state: present
+
+    - name: add docker repository to apt
+      tags:
+        - packages-docker
+      apt_repository:
+        repo: "deb https://download.docker.com/linux/debian {{ ansible_facts['distribution_release'] }} stable"
+        state: present
+        update_cache: yes
+        filename: docker
+
+    - name: Install docker
+      tags:
+        - packages-docker
+      apt:
+        name: "{{ item }}"
+        state: latest
+        update_cache: yes
+      loop:
+        - docker-ce
+
+    - name: Check that Docker is active
+      tags:
+        - packages-docker
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Ensure that 'docker' group exists
+      tags:
+        - packages-docker
+      ansible.builtin.group:
+        name: docker
+        state: present
+
+    - name: Add user(s) to 'docker' group
+      tags:
+        - packages-docker
+      user:
+        name: eouser
+        groups: docker
+        append: yes
+
+    - name: Install docker-compose
+      tags:
+        - packages-docker
+      get_url:
+        url: "https://github.com/docker/compose/releases/download/v{{ docker_compose_version }}/docker-compose-linux-{{ ansible_facts['machine'] }}"
+        dest: /usr/local/bin/docker-compose
+        mode: 'u+x,g+x'
+
+    - name: Change file ownership, group and permissions
+      tags:
+        - packages-docker
+      ansible.builtin.file:
+        path: /usr/local/bin/docker-compose
+        owner: eouser
+        group: eouser
+
+## Checkout ecFlow sources (from GitHub), and setup Docker images
+
+    - name: Clone ecBuild sources
+      become: yes
+      become_user: "{{ username }}"
+      tags:
+        - ecflow
+      git:
+        repo: "{{ ecbuild_repo_url }}"
+        dest: "{{ ecbuild_repo_dest }}"
+        version: "{{ ecbuild_git_branch }}"
+        depth: 1
+        force: yes
+        clone: yes
+
+    - name: Clone ecFlow sources
+      become: yes
+      become_user: "{{ username }}"
+      tags:
+        - ecflow
+      git:
+        repo: "{{ ecflow_repo_url }}"
+        dest: "{{ ecflow_repo_dest }}"
+        version: "{{ ecflow_git_branch }}"
+        depth: 1
+        force: yes
+        clone: yes
+
+    - name: Build Docker image -- revproxy
+      become: yes
+      become_user: "{{ username }}"
+      tags:
+        - ecflow
+      ansible.builtin.shell: docker-compose build revproxy
+      args:
+        chdir: "{{ ecflow_repo_dest }}/releng/imachination"
+
+    - name: Build Docker image -- auto-o-tron
+      become: yes
+      become_user: "{{ username }}"
+      tags:
+        - ecflow
+      ansible.builtin.shell: docker-compose build authotron
+      args:
+        chdir: "{{ ecflow_repo_dest }}/releng/imachination"
+
+    - name: Build Docker image -- ecflow (builder)
+      become: yes
+      become_user: "{{ username }}"
+      tags:
+        - ecflow
+      ansible.builtin.shell: docker-compose build ecflow-builder
+      args:
+        chdir: "{{ ecflow_repo_dest }}/releng/imachination"
+
+    - name: Use ecflow (builder) image to build ecFlow server .deb package
+      become: yes
+      become_user: "{{ username }}"
+      tags:
+        - ecflow
+      ansible.builtin.shell: docker run --rm -v $(pwd)/ecbuild:/workspace/source/ecbuild -v $(pwd)/ecflow:/workspace/source/ecflow imachination-ecflow-builder
+      args:
+        chdir: "{{ homedir }}"
+
+    - name: Copy ecFlow .deb package to imachination directory
+      become: yes
+      become_user: "{{ username }}"
+      tags:
+        - ecflow
+      ansible.builtin.shell: cp {{ ecflow_repo_dest }}/ecflow-*.deb {{ ecflow_repo_dest }}/releng/imachination/ecflow/
+
+    - name: Build Docker image -- ecflow (deploy)
+      become: yes
+      become_user: "{{ username }}"
+      tags:
+        - ecflow
+      ansible.builtin.shell: docker-compose build ecflow-deploy
+      args:
+        chdir: "{{ ecflow_repo_dest }}/releng/imachination"

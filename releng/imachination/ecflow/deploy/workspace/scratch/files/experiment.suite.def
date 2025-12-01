@@ -1,0 +1,80 @@
+suite experiments
+  edit ECF_OUT '%ECF_HOME%'
+  edit ECF_PERMISSIONS 'admin:rwxos,u1:rwx,u2:rwx,u3:rwx'
+  edit ECF_HOME 'scratch'
+  edit ECF_FILES 'scratch/files'
+  edit ECF_INCLUDE 'core/included'
+  label exec_host "localhost"
+  family u1_exper1
+    defstatus suspended
+    edit ECF_FILES 'scratch/files/u1_exper1'
+    edit ECF_PERMISSIONS 'u1:rwx'
+    family stage_a
+      edit ECF_FILES 'scratch/files/u1_exper1/stage_a'
+      task task_0
+        label l ""
+        meter m 0 20 10
+        event e
+    endfamily
+  endfamily
+  family u1_exper2
+    defstatus suspended
+    edit ECF_FILES 'scratch/files/u1_exper2'
+    edit ECF_PERMISSIONS 'u1:rwx'
+    family stage_a
+      edit ECF_FILES 'scratch/files/u1_exper2/stage_a'
+      task task_0
+        label l ""
+        meter m 0 20 10
+        event e
+    endfamily
+  endfamily
+  family u2_exper1
+    defstatus suspended
+    edit ECF_FILES 'scratch/files/u2_exper1'
+    edit ECF_PERMISSIONS 'u2:rwx'
+    family stage_a
+      edit ECF_FILES 'scratch/files/u2_exper1/stage_a'
+      task task_0
+        label l ""
+        meter m 0 20 10
+        event e
+    endfamily
+  endfamily
+  family u2_exper2
+    defstatus suspended
+    edit ECF_FILES 'scratch/files/u2_exper2'
+    edit ECF_PERMISSIONS 'u2:rwx'
+    family stage_a
+      edit ECF_FILES 'scratch/files/u2_exper2/stage_a'
+      task task_0
+        label l ""
+        meter m 0 20 10
+        event e
+    endfamily
+  endfamily
+  family u3_exper1
+    defstatus suspended
+    edit ECF_FILES 'scratch/files/u3_exper1'
+    edit ECF_PERMISSIONS 'u3:rwx'
+    family stage_a
+      edit ECF_FILES 'scratch/files/u3_exper1/stage_a'
+      task task_0
+        label l ""
+        meter m 0 20 10
+        event e
+    endfamily
+  endfamily
+  family u3_exper2
+    defstatus suspended
+    edit ECF_FILES 'scratch/files/u3_exper2'
+    edit ECF_PERMISSIONS 'u3:rwx'
+    family stage_a
+      edit ECF_FILES 'scratch/files/u3_exper2/stage_a'
+      task task_0
+        label l ""
+        meter m 0 20 10
+        event e
+    endfamily
+  endfamily
+endsuite

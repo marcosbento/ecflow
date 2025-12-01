@@ -1,0 +1,11 @@
+
+**.ecf..check
+**.ecf.check.b
+**.ecf.log
+ecflowapirc.*
+
+**/*.def
+**/*.ecf
+**/*.usr
+**/*.job[0-9]*
+**/*.[0-9]*

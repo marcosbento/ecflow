@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "tokens": [
+    {
+      "server": ".*",
+      "type": "basic",
+      "api": {
+        "username": "u1",
+        "password": "somesecret#1"
+      }
+    },
+    {
+      "server": "_SOME_OTHER_SERVER.*",
+      "type": "bearer",
+      "api": {
+        "url": "https://api.ecmwf.int/v1",
+        "key": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "email": "john.smith@ecmwf.int"
+      }
+    }
+  ]
+}

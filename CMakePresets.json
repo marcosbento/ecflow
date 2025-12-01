@@ -1,8 +1,8 @@
 {
-  "version": 6,
+  "version": 4,
   "cmakeMinimumRequired": {
     "major": 3,
-    "minor": 25,
+    "minor": 18,
     "patch": 0
   },
   "configurePresets": [
@@ -36,7 +36,8 @@
         "ENABLE_UI": "OFF",
         "ENABLE_STATIC_BOOST_LIBS": "OFF",
         "ENABLE_DEBIAN_PACKAGE": "ON",
-        "Boost_INCLUDE_DIR": "/usr/include"
+        "Boost_INCLUDE_DIR": "/usr/include",
+        "Boost_LIBRARY_DIR": "/usr/lib/aarch64-linux-gnu"
       },
       "environment": {}
     }
